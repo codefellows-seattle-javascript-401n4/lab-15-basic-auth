@@ -18,7 +18,10 @@ userSchema.methods.generateHash = function(password){
 };
 
 userSchema.methods.comparePassword = function(password){
+
     return bcrypt.compareAsync(password, this.password).then(res => {
+
+        if (!res) return false;
         return this;
     });
 };

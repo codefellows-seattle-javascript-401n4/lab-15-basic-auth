@@ -7,8 +7,8 @@ const request = require('superagent');
 const User = require('../models/User.js');
 
 describe('Testing our signup and signin auth routes', done => {
-    let username = "David";
-    let password = "Testing";
+    let username = "david";
+    let password = "testing";
     before(done => {
         User.remove({});
         app.start(process.env.PORT || 3000);
@@ -47,7 +47,7 @@ describe('Testing our signup and signin auth routes', done => {
     });
 
     it('Should correctly return status 200 and a jwt token', done => {
-        request.get(`localhost:${process.env.PORT || 3000}/api/signin`).auth(`${username}`, `${password}`).end(response => {
+        request.get(`localhost:${process.env.PORT || 3000}/api/signin`).auth(username, password).end(response => {
 
             expect(response.response.statusCode).toEqual(200);
             done();
