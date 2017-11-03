@@ -8,7 +8,9 @@ const Router = module.exports = express.Router();
 Router.get('/signin', auth, (req, res, next) => {
 
     User.findOne({username: req.auth.username}).then(user => {
-        user.comparePassword(req.auth.password).then(result => res.send(result));
+        user.comparePassword(req.auth.password).then(user => {
+            res.send(user.generateToken());
+        });
     }); 
 });
 
@@ -21,3 +23,7 @@ Router.post('/signup', jsonParser, (req, res, next) => {
             .catch(next);
    });  
 });
+
+// jwt
+
+//instead of sending back user object, we are gonna put the ID into a json web token and send that back to the user

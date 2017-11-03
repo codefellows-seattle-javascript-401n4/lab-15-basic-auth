@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bluebird').promisifyAll(require('bcrypt'));
 const Schema = mongoose.Schema;
+const jwt = require('jsonwebtoken');
 
 const userSchema = Schema({
     username: {type: String, required: true, unique: true},
@@ -18,9 +19,13 @@ userSchema.methods.generateHash = function(password){
 
 userSchema.methods.comparePassword = function(password){
     return bcrypt.compareAsync(password, this.password).then(res => {
-        return res;
+        return this;
     });
 };
+
+userSchema.methods.generateToken = function() {
+    return jwt.sign({id: this._id}, process.env.SECRET || 'change this');
+}
 
 // could we hash the password here?
 // userSchema.pre('save', (next) => {
