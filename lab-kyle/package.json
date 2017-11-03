@@ -1,0 +1,22 @@
+{
+  "name": "lab-16",
+  "version": "0.0.1",
+  "description": "Lab-16",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krichey15/lab-16-basic-auth.git"
+  },
+  "author": "richey.kyle.i@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/krichey15/lab-16-basic-auth/issues"
+  },
+  "homepage": "https://github.com/krichey15/lab-16-basic-auth#readme"
+}
