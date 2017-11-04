@@ -3,13 +3,21 @@
 
 ## Notes & Instructions On How My Lab Works
 
-3 different terminals
-//start server in one terminal
-node server
+RUNNING IN DIFFERENT TERMINALS:
 //serve up mongodb in another terminal
+mkdir db
 mongod --dbpath=./db
+//start server in one terminal
+nodemon server.js  
 //run the Tests in another terminal
 npm test
+//to open the mongo console in a different terminal
+mongo
+//to create a user or to sign up, run this command in another terminal
+_$ echo '{"username": "PeanutButter", "password": "yummyyum", "email":"peanut@restaurants.com"}' | http post localhost:3000/signup_
+
+
+
 
 _google mongo Shell Quick Reference for useful commands to run in your mongo console and to verify that you have data going in and to see where things are going wrong_
 1. make a db folder for each of your project: _$mkdir db_
@@ -18,15 +26,120 @@ _google mongo Shell Quick Reference for useful commands to run in your mongo con
 4. to run the mongo server or mongo daemon type in the following mongo command into the console
 _$mongod --dbpath=./db_
 5. after running the --dbpath=./db, you will see a message at the bottom "waiting for connections on port 27017"
-6. to open a mongo console, type in _mongo_
+6. to open a mongo console, type in _mongo_ in another terminal
 7. _show dbs_
 8. _use dbs_ //should see 'switched to db dbs'
 9. _db.users.find({}).pretty()_
-10. to start my server, run this command in another terminal: $ node server.js
-11. to create a note, open another terminal and type in this example note:
-_$ echo '{"name": "Bamboo Garden", "type": "Vegetarian", "city": "Seattle Center"}' | http post localhost:3000/api/notes_
+10. to start my server, run this command in another terminal: $ nodemon server.js
+11. to create a user, open another terminal and type in this example user:
+_$ echo '{"username": "PeanutButter", "password": "yummyyum", "email":"peanut@restaurants.com"}' | http post localhost:3000/signup_
+
+////////SIGNING UP FOR A USERNAME AND PASSWORD
+////////////IF USING .then(res.send.bind(res))  in auth-routes.js
+
+`authRouter.post('/signup', jsonParser, (req, res, next) => {
+  const password = req.body.password;
+  delete req.body.password;
+  (new User(req.body)).generateHash(password)
+    .then((user) => {
+      user.save()
+        .then(res.send.bind(res))
+        //.then(user => res.send(user.generateToken()))
+        .catch(next);
+    })
+    .catch(next);
+});`
+
+//////THEN should see this result in the terminal
+
+`[hanhthaoluu@MacBook-Pro]~/401/labs/lab-16-basic-auth[lab-thao !]:$ echo '{"username": "PeanutButter", "password": "yummyyum", "email":"peanut@restaurants.com"}' | http post localhost:3000/signup
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 175
+Content-Type: application/json; charset=utf-8
+Date: Sat, 04 Nov 2017 05:49:08 GMT
+ETag: W/"af-jy/gPO47Gjfjs5Z39UomFLBKsv8"
+X-Powered-By: Express
+
+{
+    "__v": 0,
+    "_id": "59fd54d48ec1125d33f983dd",
+    "email": "peanut@restaurants.com",
+    "password": "$2a$10$foaOrFNsYUnO9efwpszfxO.bOknpLyF3f7ZAp5PY80YievGaB6uFu",
+    "username": "PeanutButter"
+}`
+
+////////////IF USING .then(user => res.send(user.generateToken())) in auth-routes.js
+
+`authRouter.post('/signup', jsonParser, (req, res, next) => {
+  const password = req.body.password;
+  delete req.body.password;
+  (new User(req.body)).generateHash(password)
+    .then((user) => {
+      user.save()
+        //.then(res.send.bind(res))
+        .then(user => res.send(user.generateToken()))
+        .catch(next);
+    })
+    .catch(next);
+});`
+
+//////THEN should see this result in the terminal
+/////token generated below is
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZmQ1MDYyNWQ5OWY2NTllMThlM2FkNyIsImlhdCI6MTUwOTc3MzQxMH0.EMKfoN4_8YVY1iE-Xmq4BEenImSPvKKSN_Qh-9saxVE
+
+`[hanhthaoluu@MacBook-Pro]~/401/labs/lab-16-basic-auth[lab-thao !]:$ echo '{"username": "Bamboo Garden", "password": "Vegetarian", "email":"restaurant@restaurants.com"}' | http :3000/signup
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 148
+Content-Type: text/html; charset=utf-8
+Date: Sat, 04 Nov 2017 05:30:10 GMT
+ETag: W/"94-0E4/pxSCevvoxIRr/8wbarssAis"
+X-Powered-By: Express
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZmQ1MDYyNWQ5OWY2NTllMThlM2FkNyIsImlhdCI6MTUwOTc3MzQxMH0.EMKfoN4_8YVY1iE-Xmq4BEenImSPvKKSN_Qh-9saxVE`
+
+//OPEN MONGO CONSOLE IN ANOTHER TERMINAL
+`[hanhthaoluu@MacBook-Pro]~/401/labs/lab-16-basic-auth[lab-thao !]:$ mongo
+MongoDB shell version v3.4.9
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.9
+Server has startup warnings:
+2017-11-03T22:34:19.166-0700 I CONTROL  [initandlisten]
+2017-11-03T22:34:19.166-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2017-11-03T22:34:19.166-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2017-11-03T22:34:19.166-0700 I CONTROL  [initandlisten]
+> show dbs
+admin     0.000GB
+auth_dev  0.000GB
+local     0.000GB
+> use auth_dev
+switched to db auth_dev
+> show collections
+users
+> db.users.find()
+{ "_id" : ObjectId("59fd50625d99f659e18e3ad7"), "password" : "$2a$10$qOTKnjPQy./8cOA2hq7oSuhXIIBIMKtnn92nhJOthDNzHYevBXbOG", "username" : "Bamboo Garden", "email" : "restaurant@restaurants.com", "__v" : 0 }
+{ "_id" : ObjectId("59fd54d48ec1125d33f983dd"), "password" : "$2a$10$foaOrFNsYUnO9efwpszfxO.bOknpLyF3f7ZAp5PY80YievGaB6uFu", "username" : "PeanutButter", "email" : "peanut@restaurants.com", "__v" : 0 }
+> db.users.find().pretty()
+{
+  "_id" : ObjectId("59fd50625d99f659e18e3ad7"),
+  "password" : "$2a$10$qOTKnjPQy./8cOA2hq7oSuhXIIBIMKtnn92nhJOthDNzHYevBXbOG",
+  "username" : "Bamboo Garden",
+  "email" : "restaurant@restaurants.com",
+  "__v" : 0
+}
+{
+  "_id" : ObjectId("59fd54d48ec1125d33f983dd"),
+  "password" : "$2a$10$foaOrFNsYUnO9efwpszfxO.bOknpLyF3f7ZAp5PY80YievGaB6uFu",
+  "username" : "PeanutButter",
+  "email" : "peanut@restaurants.com",
+  "__v" : 0
+}
+>`
 
 
+//-a is for basic authentication
+http :3000/signin -a toasty:guest1234
 
 
 
@@ -219,8 +332,44 @@ userSchema.methods.generateToken = function() {
 module.exports = mongoose.model('User', userSchema);`
 
 
+// lib/basic-http.js //
+
+//authentication data comes from the authorization header, this reflects how we historically used http
+
+`'use strict';
+
+module.exports = (req, res, next) => {
+  try {
+    let authHeader = req.headers.authorization;
+    ////split creates an array where every element is separated by 'Basic '; then we want to grab the second element, which is base64 string
+    let base64Header = authHeader.split('Basic ')[1];
+    //put this into a buffer because we want to convert from base64 into utf8
+    //'base64' to inform node
+    let base64Buf = new Buffer(base64Header, 'base64');
+    //toString will give us the utf8 version of username:password
+    let stringHeader = base64Buf.toString();
+    let authArray = stringHeader.split(':');
+    let authObject = {
+      username: authArray[0],
+      password: authArray[1]
+    };
+    if (!authObject.username || !authObject.password) throw new Error('Unsuccessful Authentication');
+    /////in the middleware, when we are changing data/processing data, if you want that change/update to be accessible in the next piece of middleware then you have to set it on the request object. So that it will be the same request object as it goes through each one of the middleware chunks
+
+    req.auth = authObject;
+
+    next();
+  } catch(e) {
+    next(e);
+  }
+};
+`
+//base64 gets rid off all white spaces.
+//try this in the console
+(new Buffer('hello world')).toString('base64');
 
 
+_USE AUTHENTICAT IN PROJECTS_
 
 ## Submission Instructions
   * fork this repository & create a new branch for your work

@@ -12,6 +12,7 @@ authRouter.post('/signup', jsonParser, (req, res, next) => {
   (new User(req.body)).generateHash(password)
     .then((user) => {
       user.save()
+        //.then(res.send.bind(res))
         .then(user => res.send(user.generateToken()))
         .catch(next);
     })
