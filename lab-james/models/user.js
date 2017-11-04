@@ -35,7 +35,7 @@ userSchema.methods.checkPass = function(password){
 };
 
 userSchema.methods.generateToken = function(){
-  return jwt.sign({id: this._id}, process.env.SECRET || 'placeholder');
+  return jwt.sign({id: this._id}, process.env.APP_SECRET || 'placeholder');
 };
 
 module.exports = mongoose.model('user', userSchema);

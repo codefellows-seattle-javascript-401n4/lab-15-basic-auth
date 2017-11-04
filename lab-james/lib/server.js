@@ -2,10 +2,11 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 let app = express();
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost:27017/basic-auth', {useMongoClient: true});
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/basic-auth', {useMongoClient: true});
 
 app.use(require('../routes/auth-routes.js'));
 
@@ -18,7 +19,7 @@ module.exports = {
     return new Promise( (resolve, reject) => {
       if(!isRunning){
 
-        app.listen(3000, err => {
+        app.listen(process.env.PORT, err => {
           if(err){
             reject(err);
           } else {

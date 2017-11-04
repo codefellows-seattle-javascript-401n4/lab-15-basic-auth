@@ -6,7 +6,15 @@ const jsonParser = require('body-parser').json();
 
 const authRouter = module.exports = require('express').Router();
 
-authRouter.post('/newUser', jsonParser, (req, res, next) => {
+authRouter.post('/signup', jsonParser, (req, res, next) => {
+  if(!req.body.username){
+    return(res.send({statusCode: 400, message: 'Username required'}));
+  }
+
+  if(!req.body.password){
+    return(res.send({statusCode: 400, message: 'Password required'}));
+  }
+  
   const password = req.body.password;
   delete req.body.password;
 
@@ -26,7 +34,7 @@ authRouter.post('/newUser', jsonParser, (req, res, next) => {
     });
 });
 
-authRouter.get('/signIn', basicHTTP, (req, res, next) => {
+authRouter.get('/signin', basicHTTP, (req, res, next) => {
   User.findOne({username: req.auth.username})
     .then(user => {
       if(!user){
@@ -38,7 +46,7 @@ authRouter.get('/signIn', basicHTTP, (req, res, next) => {
           res.send(user.generateToken());
         })
         .catch( () => {
-          next({statusCode: 403, message: 'Invalid password'});
+          next({statusCode: 401, message: 'Invalid password'});
         });
     })
     .catch(err => {
