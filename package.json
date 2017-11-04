@@ -18,11 +18,11 @@
   },
   "homepage": "https://github.com/hanhthaoluu/lab-16-basic-auth#readme",
   "dependencies": {
-    "bcrypt": "^1.0.3",
+    "bcrypt": "latest",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "jsonwebtoken": "^8.1.0",
+    "jsonwebtoken": "latest",
     "mongoose": "^4.13.0"
   }
 }
