@@ -4,7 +4,7 @@ const User = require('../model/sushiSchema.js');
 const basicHttp = require('../lib/basicHttp.js');
 const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
-
+const bearAuth = require('../lib/bearer-authentication.js');
 
 authRouter.post('/signup', jsonParser, (req,res,next) => {
   const password = req.body.password;
@@ -27,4 +27,8 @@ authRouter.get('/signin', basicHttp, (req,res,next) => {
     .catch(err => next({statusCode:403, message: 'no no no mr superman'}));
   })
   .catch(next);
+});
+
+authRouter.get('/getMoney', bearAuth, (req,res,next) => {
+  res.send(200, "ID ", req.userId);
 });
