@@ -9,7 +9,7 @@
     "db": "mkdir -p ./db && mongod --dbpath ./db "
   },
   "keywords": [],
-  "author": "",
+  "author": "I copied off of Tyler. COWABUNGA!",
   "license": "ISC",
   "devDependencies": {
     "mocha": "^4.0.1",
@@ -24,3 +24,4 @@
     "express": "^4.16.2",
     "mongoose": "^4.12.4"
   }
+}
