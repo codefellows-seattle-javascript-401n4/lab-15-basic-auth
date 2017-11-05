@@ -2,6 +2,7 @@
 
 const User = require(__dirname + '/../models/user');
 const basicHTTP = require('../lib/basic-http');
+const bearer = require('../lib/bearer-auth');
 const jsonParser = require('body-parser').json();
 
 const authRouter = module.exports = require('express').Router();
@@ -42,3 +43,11 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
     .catch(next);
 
 });
+
+authRouter.get('/mystuff', bearer, (req, res, next) => {
+
+   console.log('req.userId is ', req.userId);
+  res.send(200, 'ID ' + req.userId);
+
+
+})
