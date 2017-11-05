@@ -44,10 +44,25 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
 
 });
 
+
 authRouter.get('/mystuff', bearer, (req, res, next) => {
 
-   console.log('req.userId is ', req.userId);
-  res.send(200, 'ID ' + req.userId);
+  User.findOne({_id:req.userId})
 
+    .then(user => {
+      if(user) res.send(200, 'ID ' + user._id);
+      else(next(404));
+    })
+    .catch(next);
 
-})
+});
+
+//  for Bonus if time...
+// authRouter.get('/mystuff/:id', bearer, (req, res, next) => {
+//
+//   User.findOne({_id: req.params.id})
+//     .then(user => {
+//       if(user._id === req.userId) res.send(200, 'ID ' + user.username);
+//       else(next(404));
+//     })
+//     .catch(next);

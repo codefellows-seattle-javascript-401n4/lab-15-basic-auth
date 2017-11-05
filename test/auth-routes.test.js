@@ -22,15 +22,19 @@ afterAll(() => {
   require('../lib/_server').stop;
 });
 
+let validJWT = '';
+let testUser = {};
+
 describe('POST /signup', () => {
 
   test('a new user can sign up when valid creds are provided', () => {
-
+    testUser = new User({username: 'Marla', password:'1234', email:'mail'});
     return request
       .post(`${HOST}:${PORT}/${API}/signup`)
-      .send({username: 'Marla', password: '1234', email: 'mail'})
+      .send(testUser)
       .then(res => {
-        expect(res.body).not.toBe(undefined);
+        validJWT = res.text;
+        expect(res.text).not.toBe(undefined);
         expect(res.status).toEqual(200);
       });
   });
@@ -81,6 +85,43 @@ describe('GET /signin', () => {
       .then(Promise.reject)
       .catch(res => {
         expect(res.message).toBe('Unauthorized');
+        expect(res.status).toEqual(401);
+      });
+  });
+});
+
+describe('GET /mystuff', () => {
+
+  test('Sign in with correct jwt should return user ID and a 200', () => {
+
+    return request
+      .get(`${HOST}:${PORT}/${API}/mystuff`)
+      .set('Authorization', `Bearer ${validJWT}`)
+      .then(res => {
+        expect(res.text).toBe(`ID ${testUser._id}`);
+        expect(res.status).toEqual(200);
+      });
+  });
+
+  test('Sign in without any token should return a 401', () => {
+
+    return request
+      .get(`${HOST}:${PORT}/${API}/mystuff`)
+      .set('Authorization', `Bearer`)
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.status).toEqual(401);
+      });
+  });
+
+  test('Sign in with invalid token should return a 401', () => {
+
+    let invalidJWT = 'randomString';
+    return request
+      .get(`${HOST}:${PORT}/${API}/mystuff`)
+      .set('Authorization', `Bearer ${invalidJWT}`)
+      .then(Promise.reject)
+      .catch(res => {
         expect(res.status).toEqual(401);
       });
   });
