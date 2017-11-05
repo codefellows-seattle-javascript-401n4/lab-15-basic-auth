@@ -8,11 +8,11 @@ const authRouter = module.exports = require('express').Router();
 
 authRouter.post('/signup', jsonParser, (req, res, next) => {
 
-  if(!req.body.username || !req.body.password || !req.body.email) next(400);
+  if(!req.body.username || !req.body.password || !req.body.email) return next(400);
 
   User.findOne({ username: req.body.username })
   .then(userExists => {
-    if(userExists) next(400);
+    if(userExists) return next(400);
   }).catch(500);
 
   const password = req.body.password;
@@ -20,26 +20,25 @@ authRouter.post('/signup', jsonParser, (req, res, next) => {
 
   (new User(req.body)).generateHash(password)
     .then(user => {
-        user.save()
+      user.save()
        .then(user => res.send(user.generateToken()))
-       .catch(401);
+       .catch(400);
     })
-    .catch(next);
+    .catch(400);
 
 });
 
 
 authRouter.get('/signin', basicHTTP, (req, res, next) => {
 
-  console.log('req.auth.password is ', req.auth.password)
   User.findOne({username: req.auth.username})
     .then(user => {
-      console.log('user is ', user);
-      if(!user) { console.log('in the if'); next(401);}
       user.verifyPassword(req.auth.password)
-        .then(user => res.send(user.generateToken()))
-        .catch(console.log('in the first catch'));
+        .then(verified => {
+          if(verified) res.send(verified.generateToken());
+          else(next(401));
+        });
     })
-    .catch(console.log('in the second catch'));
+    .catch(next);
 
 });
