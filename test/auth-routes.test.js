@@ -72,7 +72,7 @@ describe('GET /signin', () => {
       .get(`${HOST}:${PORT}/${API}/signin`)
       .auth('Marla', '1234')
       .then(res => {
-        expect(res.body).not.toBe(undefined);
+        expect(res.text).not.toBe(undefined);
         expect(res.status).toEqual(200);
       });
   });
