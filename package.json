@@ -25,5 +25,12 @@
     "express": "^4.16.2",
     "jsonwebtoken": "latest",
     "mongoose": "^4.13.0"
+  },
+  "devDependencies": {
+    "debug": "^3.1.0",
+    "express-debug": "^1.1.1",
+    "express-generator": "^4.15.5",
+    "jest": "^21.2.1",
+    "superagent": "^3.8.0"
   }
 }
