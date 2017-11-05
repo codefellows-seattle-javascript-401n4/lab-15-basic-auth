@@ -3,6 +3,11 @@
 
 ## Notes & Instructions On How My Lab Works
 
+TO INSTALL DEPENDENCIES PACKAGES
+npm init --y && npm i --save bcrypt bluebird body-parser express jsonwebtoken mongoose mongodb
+https://github.com/auth0/node-jsonwebtoken
+_With encryption, make sure that you are always on the latest versions.  So change the versions for bcrypt and jsonwebtoken in package.json to the "lastest" versions_
+
 
 RUNNING IN DIFFERENT TERMINALS:
 //serve up mongodb in another terminal
@@ -205,10 +210,7 @@ SUMMARY OF MOVING PIECES
 IN THE CASE OF 'FORGETTING YOUR PASSWORD' AND A NEW PW NEEDS TO BE REGENERATED: with the new password, it should
 generate a random hash for the URL, this random hash in the URL should correspond to an entry in the database; hash the new password and save it in place of the old password. You should never recover your old password from any websites.
 
-TO INSTALL DEPENDENCIES PACKAGES
-npm init --y && npm i --save bcrypt bluebird body-parser express jsonwebtoken mongoose
-https://github.com/auth0/node-jsonwebtoken
-_With encryption, make sure that you are always on the latest versions.  So change the versions for bcrypt and jsonwebtoken in package.json to the "lastest" versions_
+
 
 //server.js//
 
