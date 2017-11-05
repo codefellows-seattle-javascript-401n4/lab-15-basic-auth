@@ -22,6 +22,7 @@ authRouter.post('/signup', jsonParser, (req, res, next) => {
 authRouter.get('/signin', basicHTTP, (req, res, next) => {
   User.findOne({username: req.auth.username})
     .then(user => {
+      //if no matched user/ an empty response/null comes back then send 403
       if(!user) next({statusCode: 403, message: 'Forbidden'});
       user.comparePassword(req.auth.password)
       .then(user => res.send(user.generateToken()))

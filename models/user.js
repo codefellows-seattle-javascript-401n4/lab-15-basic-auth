@@ -27,6 +27,7 @@ userSchema.methods.comparePassword = function(password) {
 };
 
 userSchema.methods.generateToken = function() {
+  console.log(`process.env.SECRET : `, process.env.SECRET);
   return jwt.sign({id: this._id}, process.env.SECRET || 'changethis');
 };
 

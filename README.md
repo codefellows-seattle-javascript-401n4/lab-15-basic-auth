@@ -3,6 +3,7 @@
 
 ## Notes & Instructions On How My Lab Works
 
+
 RUNNING IN DIFFERENT TERMINALS:
 //serve up mongodb in another terminal
 mkdir db
@@ -15,11 +16,14 @@ npm test
 mongo
 //to create a user or to sign up, run this command in another terminal
 _$ echo '{"username": "PeanutButter", "password": "yummyyum", "email":"peanut@restaurants.com"}' | http post localhost:3000/signup_
+//to signin a user, run this command in the terminal
+http :3000/signin -a PeanutButter:yummyyum
 
+#REFERENCES
+1. https://www.flickr.com/photos/girliemac/sets/72157628409467125/
+2. google mongo Shell Quick Reference for useful commands to run in your mongo console and to verify that you have data going in and to see where things are going wrong
+3. https://github.com/auth0/node-jsonwebtoken
 
-
-
-_google mongo Shell Quick Reference for useful commands to run in your mongo console and to verify that you have data going in and to see where things are going wrong_
 1. make a db folder for each of your project: _$mkdir db_
 2. make sure db is in your gitignore, so it's not commited up to github
 3. compared to SQL, there is very little setup in Mongodb
@@ -137,9 +141,21 @@ users
 }
 >`
 
-
+TO SIGIN TYPE THE FOLLOWING COMMAND INTO THE TERMINAL
+http :3000/signin -a PeanutButter:yummyyum
 //-a is for basic authentication
-http :3000/signin -a toasty:guest1234
+//make a GET request to the sign-in page, do the basic auth with the username and password
+/////should see this
+`[hanhthaoluu@MacBook-Pro]~/401/labs/lab-16-basic-auth[lab-thao !]:$ http :3000/signin -a PeanutButter:yummyyum
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 148
+Content-Type: text/html; charset=utf-8
+Date: Sat, 04 Nov 2017 08:19:40 GMT
+ETag: W/"94-kaSvn6cWfvcxm8Wgow9nQXFVB18"
+X-Powered-By: Express
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5ZmQ1NGQ0OGVjMTEyNWQzM2Y5ODNkZCIsImlhdCI6MTUwOTc4MzU4MH0.dbue2wjCxTySvgBZQv_3oeoh9QZj-VCRyUAAbfRZTcI`
 
 
 
@@ -153,9 +169,9 @@ Confidential info need to be sent via HTTPs.  HTTPs creates an encriptioned tunn
 HASHED ALGORITHM vs. ENCRYPTION ALGORITHM
 1. Hashed is a one way algorithm. With hashing, you can never get the plain text back.  In order to get the plain text you have to know the plain text.  With hash, you don't need to know the password in order to compare the hashed password in our database. If you run the same password through the same algorithm, you should get the same result in hash. When a user signs in again with his or her password, we rehash that password and compare it to the hashed password that we store in our database.  Hashing uses the original plain text as the encryption key, rather than having separate secret keys.
 
-How does hashing work? Bcrypt uses blowfish cipher, which is an encryption algorithm. blowfish cipher is used for encryption. Cipher itself is an encryption algorithm. We are using in this lab as a hashing algorithm. It takes characters from random bytes from the plain text password coming in and uses that as an encryption key. Normally, we have secret and a plain text. With the hashing algorithm, the secret and the plain text comes from the same source material
+How does hashing work? Bcrypt uses blowfish cipher, which is an encryption algorithm. blowfish cipher is used for encryption. Cipher itself is an encryption algorithm. We are using it in this lab as a hashing algorithm. It takes characters from random bytes from the plain text password coming in and uses that as an encryption key. Normally, we have secret and a plain text. With the hashing algorithm, the secret and the plain text comes from the same source material
 
-Salting is the way to insert semi random data into our hashes, allowing the rainbow table attack.
+Salting is the way to insert semi random data into our hashes.
 
 2. With encryption algorithm, if you know the secret then you can retrieve the plain text back
 
@@ -176,7 +192,6 @@ THE PROCESS TO SIGN IN A USER
     'Authorization': 'Basic ' + Base64(username:password)
     //basic http of authorization
 //the string 'Basic ' is to indicate that we are using basic http version of authorization
-
   }
 
   when the request for login comes in to our server in the basic http format(GET request to sign in, POST is to create), we parse the basic HTTP data to give us the username and pw; find the corresponding user in db; we then use bcrypt to hash incoming pw  and then compare the resulting hashed pw to the hashed pw in db that we have for that user.  Then send back JWT
@@ -253,7 +268,9 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
   User.findOne({username: req.auth.username})
     .then(user => {
       if(!user) next({statusCode: 403, message: 'Forbidden'});
+      //comaparing the password with the req.auth.password that came in
       user.comparePassword(req.auth.password)
+      //sending back just the response with the user that we got from the database
       .then(user => res.send(user.generateToken()))
       .catch(err => next({statusCode: 403, message: 'Unsuccessful Authentication'}));
     }).catch(next);
@@ -268,7 +285,7 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
 www.npmjs.com/package/bcrypt
 //this is async version of hash;
 //saltRounds = rounds of salts, adding semi-random data; bcrypt algorithm knows how to figure out what are the salts; it just looks random to an outside observer; bcrypt knows how to extrapolate the information it needs with the salts/random data in it.
-Technique 2 (auto-gen a salt and hash)
+_Technique 2 (auto-gen a salt and hash)_
 
 bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   //store hash in your password DB
@@ -280,6 +297,7 @@ bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
 `'use strict';
 
 const mongoose = require('mongoose');
+//jwt is not async so we don't need to promisify jwt
 const jwt = require('jsonwebtoken');
 
 //requiring in bluebird without saving it into a constant; then call the .promisifyAll of bluebird and pass into it a require of bcrypt; so this bcrypt is the promisified version of bcrypt!!!!! which creates for every method on the bcrypt object;
@@ -317,15 +335,43 @@ userSchema.methods.generateHash = function(password) {
     });
 };
 
+
+<!-- //   https://github.com/kelektiv/node.bcrypt.js
+
+with promises
+
+bcrypt uses whatever Promise implementation is available in global.Promise. NodeJS >= 0.12 has a native Promise implementation built in. However, this should work in any Promises/A+ compliant implementation.
+
+Async methods that accept a callback, return a Promise when callback is not specified if Promise support is available.
+
+bcrypt.hash(myPlaintextPassword, saltRounds).then(function(hash) {
+  // Store hash in your password DB.
+});
+// Load hash from your password DB.
+bcrypt.compare(myPlaintextPassword, hash).then(function(res) {
+  // res == true
+});
+bcrypt.compare(someOtherPlaintextPassword, hash).then(function(res) {
+  // res == false
+}); -->
+
 userSchema.methods.comparePassword = function(password) {
+  //comparing the plain text password that has come in with this.password, which is the hashed password that was saved in the database
+  //compareAsync only takes in plain text password for comparison
   return bcrypt.compareAsync(password, this.password)
     .then(res => {
+      //if res is a truthy value then return the user
       if(res) return this;
+      //otherwise throw the new error
       throw new Error('Password did not match');
     });
 };
 
 userSchema.methods.generateToken = function() {
+  //the application secret is the process.env.SECRET
+  //the process.env.SECRET is being used to generate the token
+  //in case process.env.SECRET is not setup then use 'changethis'
+  //sending jwt to the user; jwt contains the digital signature from the server; jwt allows the user what types of info the user can access
   return jwt.sign({id: this._id}, process.env.SECRET || 'changethis');
 };
 
