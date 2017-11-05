@@ -7,15 +7,20 @@ const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
 authRouter.post('/signup', jsonParser, (req, res, next) => {
-  const password = req.body.password;
-  delete req.body.password;
-  (new User(req.body)).generateHash(password)
-    .then((user) => {
-      user.save()
-        .then(user => res.send(user.generateToken()))
-        .catch(next);
-    })
-    .catch(next);
+  if ((typeof req.body.username === 'undefined') || (typeof req.body.password === 'undefined')) {
+    res.send({statusCode: 400, message: 'missing body'});
+  } else {
+    const password = req.body.password;
+    delete req.body.password;
+    (new User(req.body)).generateHash(password)
+    // console.log(req.body)
+      .then((user) => {
+        user.save()
+          .then(user => res.send(user.generateToken()))
+          .catch(next);
+      })
+      .catch(next);
+  }
 });
 
 authRouter.get('/signin', basicHTTP, (req, res, next) => {
