@@ -13,3 +13,8 @@ _GET /signin_
   Calls verifyPassword(password) to compare password to saved User hashAsync
   Calls generateToken to send token to verified client.
   Returns 401 for all Unauthorized login attempts
+
+_GET /mystuff_   
+
+ Requires a valid token passed in, with following format: 'Bearer <token>' (must be one string)
+ If token is invalid or missing, will return a 401
