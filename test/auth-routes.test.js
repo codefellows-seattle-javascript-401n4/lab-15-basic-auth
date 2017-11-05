@@ -30,7 +30,7 @@ describe('POST /signup', () => {
       .post(`${HOST}:${PORT}/${API}/signup`)
       .send({username: 'Marla', password: '1234', email: 'mail'})
       .then(res => {
-        expect(res.body).not.toBe(undefined);
+        expect(res.text).not.toBe(undefined);
         expect(res.status).toEqual(200);
       });
   });
@@ -68,7 +68,7 @@ describe('GET /signin', () => {
       .get(`${HOST}:${PORT}/${API}/signin`)
       .auth('Marla', '1234')
       .then(res => {
-        expect(res.body).not.toBe(undefined);
+        expect(res.text).not.toBe(undefined);
         expect(res.status).toEqual(200);
       });
   });
