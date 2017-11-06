@@ -34,7 +34,7 @@ describe('POST',() => {
 
     it(' should create a user', ()=>{
         return superagent
-        .post(`localhost:${PORT}/signup`)
+        .post(`localhost:${PORT}/api/signup`)
         .set({"Content-Type":"application/json"})
         .send({username:"user1", email:"user1@hotmail.com", password:"user1"})
         .then(res=>{
@@ -45,7 +45,7 @@ describe('POST',() => {
 
     it('should return a 400 when user exists', ()=>{
         return superagent
-        .post(`localhost:${PORT}/signup`)
+        .post(`localhost:${PORT}/api/signup`)
         .set({"Content-Type":"application/json"})
         .send({"username":"user1", "email":"user1@hotmail.com", "password":"user1"})
         .then(Promise.reject)
@@ -58,7 +58,7 @@ describe('POST',() => {
 
     it('should return a 400 when no body is provided', ()=>{
         return superagent
-        .post(`localhost:${PORT}/signup`)
+        .post(`localhost:${PORT}/api/signup`)
         .send({})
         .then(Promise.reject)
         .catch((res) => {
@@ -73,7 +73,7 @@ describe('GET', ()=>{
 
     it('should return a 404 if a user is not authenticated', ()=>{
         return superagent
-        .get(`localhost:${PORT}/signin`)
+        .get(`localhost:${PORT}/api/signin`)
         .auth('not user', 'pass')
         .then(Promise.reject)
         .catch(res=>{
@@ -85,7 +85,7 @@ describe('GET', ()=>{
 
     it('should respond with token for a request with a valid basic authorization header', ()=>{
         return superagent
-        .get(`localhost:${PORT}/signin`)
+        .get(`localhost:${PORT}/api/signin`)
         .auth('user1','user1')
         .then(res => {
             expect(res.text).not.toBe(null);
@@ -98,12 +98,11 @@ describe('GET', ()=>{
 describe('unregistered paths ', ()=>{
     it('should respond with a 404',()=>{
         return superagent
-        .post(`localhost:${PORT}/si`)
+        .post(`localhost:${PORT}/api/si`)
         .set({"Content-Type":"application/json"})
         .send({"username":"someone", "email":"someone@hotmail.com", "password":"guest"})
         .then(Promise.reject)
         .catch(res=>{
-            console.log(res);
             expect(res.status).toEqual(404);
             expect(res.message).toBe('Not Found')
         })

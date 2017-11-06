@@ -6,7 +6,7 @@ const checkToken = require('../lib/check-token');
 const bodyParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
-authRouter.post('/signup', bodyParser, (req, res, next) => {
+authRouter.post('/api/signup', bodyParser, (req, res, next) => {
 
     if (!req.body.username||!req.body.email||!req.body.password){
         return next({statusCode:400, message:"bad request"})
@@ -33,7 +33,7 @@ authRouter.post('/signup', bodyParser, (req, res, next) => {
 })
 
 
-authRouter.get('/signin', basicHTTP, (req, res, next) => {
+authRouter.get('/api/signin', basicHTTP, (req, res, next) => {
     
     User.findOne({username: req.auth.username})
     .then(userFound => {
@@ -51,6 +51,6 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
     .catch(next)
 })
 
-authRouter.get('/email', checkToken, (req, res, next)=>{
+authRouter.get('/api/email', checkToken, (req, res, next)=>{
 
 })
