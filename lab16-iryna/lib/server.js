@@ -3,10 +3,14 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGODB_URI||'mongodb://localhost:27017/auth', {useMongoClient:true});
-const app = require('express')();
+mongoose.connect(process.env.MONGODB_URI);
+const app = module.exports = require('express')();
 
 app.use(require('../routes/auth-routes'));
+
+app.all('*', (req, res, next) => {
+     next({statusCode:404, message:'route not found'});
+    })
 
 app.use((err, req, res, next ) => {
     console.log(err);

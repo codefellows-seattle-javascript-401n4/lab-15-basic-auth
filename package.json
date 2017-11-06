@@ -15,9 +15,16 @@
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "expect": "^21.2.1",
+    "express-debug": "^1.1.1",
+    "express-generator": "^4.15.5",
+    "jest": "^21.2.1",
+    "mocha": "^4.0.1",
+    "superagent": "^3.8.0"
+  },
   "scripts": {
-    "test": "mocha",
+    "test": "jest",
     "start": "nodemon index.js"
   },
   "repository": {
