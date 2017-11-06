@@ -8,13 +8,21 @@ const authRouter = module.exports = require('express').Router();
 
 authRouter.post('/signup', jsonParser, (req, res, next) => {
   if(!req.body.username){
-    return(res.send({statusCode: 400, message: 'Username required'}));
+    return(
+      res.writeHead(400),
+      res.write('Username required'),
+      res.end()
+    );
   }
 
   if(!req.body.password){
-    return(res.send({statusCode: 400, message: 'Password required'}));
+    return(
+      res.writeHead(400),
+      res.write('Password required'),
+      res.end()
+    );
   }
-  
+
   const password = req.body.password;
   delete req.body.password;
 
