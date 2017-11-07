@@ -4,7 +4,8 @@
 const User = require('../models/user');
 const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
-const basicHTTP = require('../lib/basic-http')
+const basicHTTP = require('../lib/basic-http');
+
 authRouter.post('/signup', jsonParser,(req, res, next) => {
   const password = req.body.password;
   delete req.body.password;
