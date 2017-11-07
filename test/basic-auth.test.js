@@ -22,59 +22,74 @@ afterAll(() => {
   require('../lib/_server').stop;
 });
 
-const exampleUser = {
-  username:'studley',
-  password:'12345'
-};
-
-const badId = {
-  username:'studley'
-};
 
 describe('POST/signup/', () => {
-  test('should return token and 200 status code', (done) => {
+  test('should return hash and 200 status code', () => {
     return request
       .post(`${url}/signup`)
-      .send(exampleUser)
-      .end((err, res) => {
-        if (err) return done(err);
-        // console.log('POST: /signup TOKEN:', res.text, '\n');
+      .send({'username':'viscous', 'password':'1234'})
+      .then(res => { 
         expect(res.status).toEqual(200);
         expect(typeof res.text).toBe('string');
-        done();
       });
   });
 
-  describe('POST/signup/ with no user name or password', () => {
-    test('Should give us a 400 with no password', function(done) {
-      return request
-        .post(`${url}/signup`)
-        .send(badId)
-        .then(res => {
-          expect(res.body.statusCode).toEqual(400);
-          expect(res.body.message).toEqual('missing body');
-          done();
-        });
-    });
+  // describe('POST/signup/ with no user name or password', () => {
+  // test('Should give us a 400 with no password', function() {
+  //   return request
+  //     .post(`${url}/signup`)
+  //     .send({})
+  //     .then(res => {
+  //       expect(res.body.statusCode).toEqual(400);
+  //       expect(res.body.message).toEqual('missing body');
+  //     });
+  // });
 
-    test('Should reutrn 401 because passwords did not match', done => {
-      // let exampleBad = {
-      //   username:'studley',
-      //   password:'54321'
-      // };
-      return request
-        .get(`${url}/signin`)
-        .auth('studley', '')
-        .end((err, res) => {
-          expect(res.statusCode).toEqual(403);
-          expect(res.message).toEqual('Authenticat seyyyzzz no!!!!');
-          // console.log(exampleUser);
-          done();
-        });
-
-    });
-
+  test('should give status code 400 with no body', function () {
+    return request
+      .post(`${url}/signup`)
+      .send({})
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.response.status).toEqual(500);
+        expect(res.response.text).toBe('bad request');
+      });
   });
 
-});
+  // describe('GET/sigin', () => {   
+  test('Bad URI should return a 404', () => {
 
+    return request
+      .get(`${url}/signin`)
+      .auth('not me', 'pass')
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.response.statusCode).toBe(404);
+        expect(res.response.message).toEqual('verboden');
+      });
+  });
+
+
+  test('Should reutrn 401 because passwords did not match', () => {
+  
+    return request
+      .get(`${url}/signin`)
+      .auth('viscous', 'pass')
+      .then(Promise.reject)
+      .catch(res => { 
+        expect(res.response.statusCode).toEqual(404);
+        expect(res.response.message).toEqual('Authenticat seyyyzzz no!!!!');
+      });
+
+  });
+  test('Route not registered', () => {
+    return request
+      .get(`${url}/pi`)
+      .send({'username':'mangum', 'password':'pi'})
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.status).toBe(404);
+        expect(res.message).toBe('route not found');
+      });
+  });
+});
