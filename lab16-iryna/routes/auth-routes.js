@@ -27,7 +27,7 @@ authRouter.post('/api/signup', bodyParser, (req, res, next) => {
     .then(user => {
           // console.log ('USER ', user);
          user.save()
-         .then(user => res.send(user.generateToken()))
+         .then( user => res.send(user.generateToken()))
          .catch(next)
     })
      .catch(next)
@@ -53,28 +53,32 @@ authRouter.get('/api/signin', basicHTTP, (req, res, next) => {
 })
 
 authRouter.get('/api/email', checkToken, (req, res, next)=>{
-    console.log('user: ', user);
-    res.send(200, user);
+    console.log('userID: ', req.userID);
+    res.send(200, userID);
 })
 
 //update user:
 authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
-        if(user){
+        User.findOne({_id:req.userID})
+        .then( user => {
+            console.log(user);
             user.username = req.body.username;
             user.email = req.body.email;
             user.password = req.body.password;
             user.save()
             .then(res.send(res.status(200).send(user)))
-            .cathc(err => res.send(err))
-        }
-        else(next({statusCode:404, message: 'User not found'}))
+            .catch(err => res.send(err))
+        })
+        .catch(next({statusCode:404, message: 'User not found'}))
 })
 
 //delete user:
 authRouter.delete('/api/delete', checkToken, bodyParser, (req, res, next)=>{
-    if(user){
+    User.findOne({_id:req.userID})
+    .then( user => {
         user.remove(user)
         .then(res.send("success!"))
-    }
-    esle(next({statusCode:404, message: 'User not found'}))
+        .catch(err => res.send(err))
+    })
+    .catch (next({statusCode:404, message: 'User not found'}))
 })
