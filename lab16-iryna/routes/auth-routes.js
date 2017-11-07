@@ -2,6 +2,7 @@
 
 const User = require('../models/user');
 const basicHTTP = require('../lib/basic-https');
+// const jwtAuthz = require('express-jwt-authz');
 const checkToken = require('../lib/check-token');
 const bodyParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
@@ -52,5 +53,28 @@ authRouter.get('/api/signin', basicHTTP, (req, res, next) => {
 })
 
 authRouter.get('/api/email', checkToken, (req, res, next)=>{
+    console.log('user: ', user);
+    res.send(200, user);
+})
 
+//update user:
+authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
+        if(checkToken){
+            user.username = req.body.username;
+            user.email = req.body.email;
+            user.password = req.body.password;
+            user.save()
+            .then(res.send(res.status(200).send(user)))
+            .cathc(err => res.send(err))
+        }
+        else(next({statusCode:404, message: 'User not found'}))
+})
+
+//delete user:
+authRouter.delete('/api/delete', checkToken, bodyParser, (req, res, next)=>{
+    if(checkToken){
+        user.remove(user)
+        .then(res.send("success!"))
+    }
+    esle(next({statusCode:404, message: 'User not found'}))
 })

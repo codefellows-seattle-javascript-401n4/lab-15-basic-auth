@@ -11,6 +11,7 @@
     "dotenv": "^4.0.0",
     "eslint": "^4.10.0",
     "express": "^4.16.2",
+    "express-jwt-authz": "^1.0.0",
     "jsonwebtoken": "^8.1.0",
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.0"
