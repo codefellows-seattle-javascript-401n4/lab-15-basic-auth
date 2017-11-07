@@ -59,7 +59,7 @@ authRouter.get('/api/email', checkToken, (req, res, next)=>{
 
 //update user:
 authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
-        if(checkToken){
+        if(user){
             user.username = req.body.username;
             user.email = req.body.email;
             user.password = req.body.password;
@@ -72,7 +72,7 @@ authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
 
 //delete user:
 authRouter.delete('/api/delete', checkToken, bodyParser, (req, res, next)=>{
-    if(checkToken){
+    if(user){
         user.remove(user)
         .then(res.send("success!"))
     }
