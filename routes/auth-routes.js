@@ -7,9 +7,7 @@ const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
 authRouter.post('/signup', jsonParser, (req, res, next) => {
-  // if ((typeof req.body.username === 'undefined') || (typeof req.body.password === 'undefined')) {
-  //   res.send({statusCode: 400, message: 'missing body'});
-  // } else ({
+
   if(!req.body.username || !req.body.password) {
     return next({statusCode:400, message:'bad request'});
   }

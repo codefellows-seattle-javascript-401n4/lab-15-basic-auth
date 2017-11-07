@@ -51,7 +51,7 @@ describe('POST/signup/', () => {
       .send({})
       .then(Promise.reject)
       .catch(res => {
-        expect(res.response.status).toEqual(500);
+        expect(res.response.status).toEqual(400);
         expect(res.response.text).toBe('bad request');
       });
   });
@@ -65,7 +65,7 @@ describe('POST/signup/', () => {
       .then(Promise.reject)
       .catch(res => {
         expect(res.response.statusCode).toBe(404);
-        expect(res.response.message).toEqual('verboden');
+        expect(res.response.text).toBe('verboden');
       });
   });
 
@@ -78,18 +78,18 @@ describe('POST/signup/', () => {
       .then(Promise.reject)
       .catch(res => { 
         expect(res.response.statusCode).toEqual(404);
-        expect(res.response.message).toEqual('Authenticat seyyyzzz no!!!!');
+        expect(res.response.text).toBe('Authenticat seyyyzzz no!!!!');
       });
 
   });
   test('Route not registered', () => {
     return request
       .get(`${url}/pi`)
-      .send({'username':'mangum', 'password':'pi'})
+      .send({'username':'magnum', 'password':'pi'})
       .then(Promise.reject)
       .catch(res => {
         expect(res.status).toBe(404);
-        expect(res.message).toBe('route not found');
+        expect(res.message).toBe('Not Found');
       });
   });
 });
