@@ -59,26 +59,33 @@ authRouter.get('/api/email', checkToken, (req, res, next)=>{
 
 //update user:
 authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
+    console.log('in edit user');
         User.findOne({_id:req.userID})
         .then( user => {
-            console.log(user);
-            user.username = req.body.username;
-            user.email = req.body.email;
-            user.password = req.body.password;
-            user.save()
-            .then(res.send(res.status(200).send(user)))
-            .catch(err => res.send(err))
+            if(user){
+                console.log(user);
+                user.username = req.body.username;
+                user.email = req.body.email;
+                user.password = req.body.password;
+                user.save()
+                .then(res.send(res.status(200).send(user)))
+                .catch(err => res.send(err))
+            }
+            else next({statusCode:404, message: 'User not found'})
         })
-        .catch(next({statusCode:404, message: 'User not found'}))
+        .catch(next)
 })
 
 //delete user:
 authRouter.delete('/api/delete', checkToken, bodyParser, (req, res, next)=>{
     User.findOne({_id:req.userID})
     .then( user => {
-        user.remove(user)
-        .then(res.send("success!"))
-        .catch(err => res.send(err))
+        if (user){
+            user.remove(user)
+            .then(res.send("success!"))
+            .catch(err => res.send(err))
+        }
+        else next({statusCode:404, message: 'User not found'})
     })
-    .catch (next({statusCode:404, message: 'User not found'}))
+    .catch(next)
 })
