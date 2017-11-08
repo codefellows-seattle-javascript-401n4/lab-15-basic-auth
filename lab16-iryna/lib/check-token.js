@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 module.exports = (req, res, next) => {
-    if(!req.headers.authorization) throw new Error('you must authorize');
+    if(!req.headers.authorization) return next({statusCode:401, message:'you must authorize'});
 
     let token = req.headers.authorization.split('Bearer ')[1];
-    if(!token) throw new Error('invalid authorization');
+    if(!token) return next({statusCode:401, message:'invalid authorization'});
 
     let secret = process.env.APP_SECRET||'encryptthis';
     let decodedToken = jwt.verify(token, secret);

@@ -4,12 +4,16 @@ const PORT = 5000;
 const User = require('../models/user');
 const mongoose = require('mongoose');
 const expect = require('expect');
+const jwt = require('jsonwebtoken');
 mongoose.Promise = require('bluebird');
 mongoose.connect(process.env.MONGODB_URI);
 
 const superagent = require('superagent');
-// const server = require('../lib/server');
+require('superagent-auth-bearer')(superagent);
 const server = require('express')();
+
+let token = '';
+
 
 server.use(require('../routes/auth-routes'));
 
@@ -28,6 +32,20 @@ afterAll(()=>{
     mongoose.connection.close();
     server.close();
     console.log('closing');
+})
+
+describe('unregistered paths ', ()=>{
+    it('should respond with a 404',()=>{
+        return superagent
+        .post(`localhost:${PORT}/api/si`)
+        .set({"Content-Type":"application/json"})
+        .send({"username":"someone", "email":"someone@hotmail.com", "password":"guest"})
+        .then(Promise.reject)
+        .catch(res=>{
+            expect(res.status).toEqual(404);
+            expect(res.message).toBe('Not Found')
+        })
+    })
 })
 
 describe('POST',() => {
@@ -50,7 +68,7 @@ describe('POST',() => {
         .send({"username":"user1", "email":"user1@hotmail.com", "password":"user1"})
         .then(Promise.reject)
         .catch((res) => {
-            console.log("res: ",res);
+            // console.log("res: ",res);
             expect(res.status).toEqual(400);
             expect(res.response.text).toBe('user exists');
         })
@@ -88,6 +106,8 @@ describe('GET', ()=>{
         .get(`localhost:${PORT}/api/signin`)
         .auth('user1','user1')
         .then(res => {
+            token = res.text;
+            console.log("TOKEN: ", token);
             expect(res.text).not.toBe(null);
             expect(res.status).toEqual(200);
         })
@@ -95,18 +115,68 @@ describe('GET', ()=>{
 
 })
 
-describe('unregistered paths ', ()=>{
-    it('should respond with a 404',()=>{
+describe('Authorization: ', ()=>{
+
+    it('GET should response with a 401 if no authorization token is provided',()=>{
+        let getInvalid = '';
         return superagent
-        .post(`localhost:${PORT}/api/si`)
-        .set({"Content-Type":"application/json"})
-        .send({"username":"someone", "email":"someone@hotmail.com", "password":"guest"})
+        .get(`localhost:${PORT}/api/email`)
+        // .authBearer(getInvalid)
         .then(Promise.reject)
         .catch(res=>{
-            expect(res.status).toEqual(404);
-            expect(res.message).toBe('Not Found')
+            expect(res.response.statusCode).toEqual(401);
+            expect(res.response.text).toBe('you must authorize')
         })
     })
+
+    it('GET should response with a 401 if invalid token is provided',()=>{
+        let getInvalid = '';
+        return superagent
+        .get(`localhost:${PORT}/api/email`)
+        .authBearer(getInvalid)
+        .then(Promise.reject)
+        .catch(res=>{
+            expect(res.response.statusCode).toEqual(401);
+            expect(res.response.text).toBe('invalid authorization')
+        })
+    })
+
+    it('PUT should response with a 401 if no authorization token is provided',()=>{
+        let getInvalid = '';
+        return superagent
+        .put(`localhost:${PORT}/api/edit`)
+        // .authBearer(getInvalid)
+        .then(Promise.reject)
+        .catch(res=>{
+            expect(res.response.statusCode).toEqual(401);
+            expect(res.response.text).toBe('you must authorize')
+        })
+    })
+
+    it(' PUT should update user info provided a good token', ()=>{
+        // console.log("PUT TOKEN: ", token);
+        return superagent
+        .put(`localhost:${PORT}/api/edit`)
+        .authBearer(token)
+        .send({"username":"changed user", "email":"changed@hotmail.com", "password":"changed"})
+        .then(res=>{
+            expect(res.body.username).toBe('changed user')
+        })  
+    })
+
+    it('PUT should return 400 if no body is provided', ()=>{
+        return superagent
+        .put(`localhost:${PORT}/api/edit`)
+        .authBearer(token)
+        .send({})
+        .then(Promise.reject)
+        .catch(res=>{
+            expect(res.response.statusCode).toEqual(400);
+            expect(res.response.text).toBe('no body')
+        })
+      
+    })
+
 })
 
 
