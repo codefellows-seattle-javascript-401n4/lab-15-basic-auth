@@ -11,10 +11,11 @@ module.exports = (req, res, next) => {
 
     let secret = process.env.APP_SECRET||'encryptthis';
     let decodedToken = jwt.verify(token, secret);
-    console.log(decodedToken);
+    console.log(decodedToken.id);
 
-    User.findOne({_id:decodedToken._id})
+    User.findOne({_id:decodedToken.id})
     .then(user =>{
+        // console.log('user : ',user)
         req.userID = user._id;
         next()
     })
