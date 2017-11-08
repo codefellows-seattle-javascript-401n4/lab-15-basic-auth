@@ -5,10 +5,12 @@ const basicHttp = require('../lib/basicHttp.js');
 const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 const bearAuth = require('../lib/bearer-authentication.js');
+const Food = require('../lib/sushiSushi.js');
 
 authRouter.post('/signup', jsonParser, (req,res,next) => {
   const password = req.body.password;
   delete req.body.password;
+
   (new User(req.body)).generateHash(password)
     .then( user => {
       user.save()
@@ -17,7 +19,15 @@ authRouter.post('/signup', jsonParser, (req,res,next) => {
     })
     .catch(next);
 });
-
+authRouter.post('api/sushi', jsonParser, (req,res,next) => {
+  new Food(req.body)
+  .then( user => {
+    user.save()
+    .then( food => res.send(req.body))
+    .catch(err => next({statusCode:400, message: 'bad request'}));
+  })
+  .catch(next);
+});
 authRouter.get('/signin', basicHttp, (req,res,next) => {
   User.findOne({username: req.auth.username})
   .then( user => {
