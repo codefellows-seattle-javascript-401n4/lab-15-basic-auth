@@ -8,7 +8,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/auth_dev'
 const app = require('express')();
 app.use(jsonParser.json())
 app.use(require(__dirname + '/route/authenticate-routes'));
-
+app.use(require(__dirname + '/route/food-route'));
 app.use((err,req,res,next) => {
   console.log(err);
   res.status( 500|| err.statusCode).send(err.message || 'server error');

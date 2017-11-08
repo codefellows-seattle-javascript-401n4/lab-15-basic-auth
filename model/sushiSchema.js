@@ -12,11 +12,7 @@ const sushiSchema = new mongoose.Schema({
   password: {type: String, required: true},
 });
 
-const foodSchema = new mongoose.Schema({
-  name: String,
-  fish: String,
-  userID: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-});
+
 sushiSchema.methods.generateHash = function(password){
   return bcrypt.hashAsync(password,10)
   .then( hash => {
@@ -38,4 +34,3 @@ sushiSchema.methods.generateToken = function(){
 };
 
 module.exports = mongoose.model('User', sushiSchema);
-module.exports = mongoose.model('Food', foodSchema);
