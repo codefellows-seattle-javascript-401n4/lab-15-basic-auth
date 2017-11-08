@@ -4,6 +4,7 @@ const User = require(__dirname + '/../models/user');
 const basicHTTP = require('../lib/basic-http');
 const bearer = require('../lib/bearer-auth');
 const jsonParser = require('body-parser').json();
+const parse = require('../lib/parse');
 
 const authRouter = module.exports = require('express').Router();
 
@@ -26,6 +27,22 @@ authRouter.post('/signup', jsonParser, (req, res, next) => {
        .catch(400);
     })
     .catch(400);
+
+});
+
+authRouter.put('/user', bearer, (req, res, next) => {
+
+  req.body = parse(req);
+
+  if(!req.body.username && !req.body.password && !req.body.email) return next(400);
+
+  User.findOne({_id: req.userId})
+    .then(user => {
+      user.username = req.body.username;
+      user.email = req.body.email;
+      res.send(200, {username: user.username, email: user.email });
+    })
+    .catch(401);
 
 });
 
