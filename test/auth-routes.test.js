@@ -127,6 +127,59 @@ describe('GET /mystuff', () => {
   });
 });
 
+describe('PUT /user', () => {
+
+  test('Updating user username and email should return next values and 200', () => {
+
+    return request
+      .put(`${HOST}:${PORT}/${API}/user`)
+      .set('Authorization', `Bearer ${validJWT}`)
+      .send({username: 'Marlissima', password: '1234', email: 'myNewMail'})
+      .then(res => {
+        expect(res.body).toEqual({username: 'Marlissima', email: 'myNewMail'});
+        expect(res.status).toBe(200);
+      });
+  });
+
+  test('If no token is provided, return a 401', () => {
+
+    return request
+      .put(`${HOST}:${PORT}/${API}/user`)
+      .set('Authorization', `Bearer`)
+      .send({username: 'Marlena', password: '1234', email: 'boo'})
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.status).toBe(401);
+      });
+  });
+
+  test('If invalid token is provided, return a 401', () => {
+
+    let invalidJWT = 'blahblahblah';
+
+    return request
+      .put(`${HOST}:${PORT}/${API}/user`)
+      .set('Authorization', `Bearer ${invalidJWT}`)
+      .send({username: 'Marlena', password: '1234', email: 'boo'})
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.status).toBe(401);
+      });
+  });
+
+  test('If no username and email is provided, return a 400', () => {
+
+    return request
+      .put(`${HOST}:${PORT}/${API}/user`)
+      .set('Authorization', `Bearer ${validJWT}`)
+      .send({username: 'Marlena'})
+      .then(Promise.reject)
+      .catch(res => {
+        expect(res.status).toBe(400);
+      });
+  });
+});
+
 describe('UNREGISTERED ROUTES', () => {
 
   test('Bad URI should return a 404', () => {
