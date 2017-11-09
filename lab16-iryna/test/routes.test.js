@@ -158,7 +158,7 @@ describe('Authorization: ', ()=>{
         return superagent
         .put(`localhost:${PORT}/api/edit`)
         .authBearer(token)
-        .send({"username":"changed user", "email":"changed@hotmail.com", "password":"changed"})
+        .send({"username":"changed user"})
         .then(res=>{
             expect(res.body.username).toBe('changed user')
         })  

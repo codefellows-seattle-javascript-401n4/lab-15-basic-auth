@@ -63,11 +63,9 @@ authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
         User.findOne({_id:req.userID})
         .then( user => {
             if (!req.body.username&!req.body.email&!req.body.password) return next({statusCode:400, message: 'no body'});
-            if(!user) next({statusCode:404, message: 'User not found'});
-                console.log(user);
+            if(!user) return next({statusCode:404, message: 'User not found'});
                 user.username = req.body.username;
-                user.email = req.body.email;
-                user.password = req.body.password;
+                console.log(user);
                 user.save()
                 .then(res.send(res.status(200).send(user)))
                 .catch(err => res.send(err))
