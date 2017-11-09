@@ -62,7 +62,7 @@ authRouter.put('/api/edit',  checkToken, bodyParser, (req, res, next)=>{
     console.log('in edit user');
         User.findOne({_id:req.userID})
         .then( user => {
-            if (!req.body.username||!req.body.email||!req.body.password) return next({statusCode:400, message: 'no body'});
+            if (!req.body.username&!req.body.email&!req.body.password) return next({statusCode:400, message: 'no body'});
             if(!user) next({statusCode:404, message: 'User not found'});
                 console.log(user);
                 user.username = req.body.username;
