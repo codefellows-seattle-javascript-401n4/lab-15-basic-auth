@@ -25,6 +25,6 @@ authRouter.get('/signin', basicHTTP, (req, res, next) => {
     if(!user) next({statusCode:403, message: 'forbidden'});
     user.comparePassword(req.auth.password)
     .then(user => res.send(user.generateToken()))
-    .catch(err => next({statusCode: 400, message: 'forbidden request'}))
+    .catch(err => next({statusCode: 400, message: 'forbidden request'}));
   }).catch(next);
 });
