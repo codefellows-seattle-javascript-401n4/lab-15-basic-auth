@@ -3,13 +3,60 @@
 
 ## Notes & Instructions On How My Lab Works
 
-TO INSTALL DEPENDENCIES PACKAGES
-npm init --y && npm i --save bcrypt bluebird body-parser express jsonwebtoken mongoose mongodb
+#TO JUST RUN THE TESTS  
+1. serve up mongodb in one terminal with the below command
+mkdir db
+//then run this command in the same terminal
+mongod --dbpath=./db
+//should see this at the bottom
+waiting for connections on port 27017
+2. run the Tests in another terminal with the below command
+npm test
+
+_should see the below result, all 8 tests passed_
+
+`[hanhthaoluu@MacBook-Pro]~/401/labs/lab-16-basic-auth[lab-thao !?]:$ npm test
+
+> lab-16-basic-auth@1.0.0 test /Users/hanhthaoluu/401/labs/lab-16-basic-auth
+> jest
+
+(node:23355) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: Not Found
+ PASS  test/authRoutes.test.js
+  ● Console
+
+    console.log server.js:28
+      __SERVER_ON__3000
+    console.log models/user.js:30
+      process.env.SECRET :  testsecret
+    console.log test/authRoutes.test.js:52
+      basicToken:  dGVzdDp0ZXN0UGFzc3dvcmQ=
+    console.log models/user.js:30
+      process.env.SECRET :  testsecret
+    console.log models/user.js:30
+      process.env.SECRET :  testsecret
+    console.log models/user.js:30
+      process.env.SECRET :  testsecret
+    console.log test/authRoutes.test.js:87
+      myJWT:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMDkyY2NjZDBmNmQ5NWIzYjRkMmI4YiIsImlhdCI6MTUxMDU1MDczMn0.gXkV3LKQY75TziN0LZCaNsK-7M2u71bSGxyRGkiiqIc
+    console.log server.js:41
+      SERVER OFF
+
+ PASS  test/basicHttp.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        2.622s
+Ran all test suites.`
+
+
+#TO INSTALL DEPENDENCIES PACKAGES
+npm init --y && npm i --save bcrypt bluebird body-parser express jsonwebtoken mongoose mongodb && npm i --save-dev jest superagent
 https://github.com/auth0/node-jsonwebtoken
 _With encryption, make sure that you are always on the latest versions.  So change the versions for bcrypt and jsonwebtoken in package.json to the "lastest" versions_
 
 
-RUNNING IN DIFFERENT TERMINALS:
+#RUNNING IN DIFFERENT TERMINALS:
 //serve up mongodb in another terminal
 mkdir db
 mongod --dbpath=./db

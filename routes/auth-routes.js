@@ -7,6 +7,8 @@ const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
 authRouter.post('/signup', jsonParser, (req, res, next) => {
+  if(!req.body.username || !req.body.password || !req.body.email)
+    return next({statusCode: 400, err: new Error('Request Error: must provide username, password and email')});
   const password = req.body.password;
   delete req.body.password;
   (new User(req.body)).generateHash(password)
