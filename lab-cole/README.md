@@ -3,5 +3,7 @@
 
 ## Project Documentation
 
- * Scaffolding Setup completed.
- * Project code pending...
+ * Scaffolding setup completed.
+ * Demo code implemented.
+ * Personal code almost done?
+ * Not sure how to finish and run...
