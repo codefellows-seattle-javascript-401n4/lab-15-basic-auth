@@ -1,7 +1,7 @@
 const express = require('express');
-const User = require(`${__dirname}/../models/User.js`);
+const User = require(`${__dirname}/../models/Users.js`);
 const jsonParser = require('body-parser').json();
-const auth = require('../lib/basic-http');
+const auth = require('../lib/http');
 
 const Router = module.exports = express.Router();
 
