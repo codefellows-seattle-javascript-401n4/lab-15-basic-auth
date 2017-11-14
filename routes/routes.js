@@ -1,5 +1,5 @@
 const express = require('express');
-const User = require(`${__dirname}/../models/Users.js`);
+const User = require(`${__dirname}/../models/User.js`);
 const jsonParser = require('body-parser').json();
 const auth = require('../lib/http');
 
