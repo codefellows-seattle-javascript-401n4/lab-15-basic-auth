@@ -14,8 +14,8 @@ authRouter.post('/signup', jsonParser, (req,res,next) => {
   (new User(req.body)).generateHash(password)
     .then( user => {
       user.save()
-      .then( user => res.send(user.generateToken()))
-      .catch(err => next({statusCode:400, message: 'bad request'}));
+      .then( user => res.status(200).send(user.generateToken()))
+      .catch(err => res.status(400).send(err));
     })
     .catch(next);
 });
@@ -23,14 +23,14 @@ authRouter.post('/signup', jsonParser, (req,res,next) => {
 authRouter.get('/signin', basicHttp, (req,res,next) => {
   User.findOne({username: req.auth.username})
   .then( user => {
-    if(!user) next({statusCode: 401, message: 'thou shall not pass'});
     user.comparePassword(req.auth.password)
-    .then(user => res.send(user.generateToken()))
-    .catch(err => next({statusCode:403, message: 'no no no mr superman'}));
+    .then(user => res.status(200).send(user.generateToken()))
+    .catch(err => res.status(401).send(err));
   })
   .catch(next);
 });
 
 authRouter.get('/getMoney', bearAuth, (req,res,next) => {
-  res.send(200, "ID ", req.userId);
+  res.send(200, 'ID ', req.userId);
+  next();
 });
