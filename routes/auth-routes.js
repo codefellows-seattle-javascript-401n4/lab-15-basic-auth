@@ -2,7 +2,7 @@
 
 
 // || or
-const User = require(__dirname + '/../user');
+const User = require(__dirname + '/../models/user');
 const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
