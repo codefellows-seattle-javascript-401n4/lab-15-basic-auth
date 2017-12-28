@@ -34,7 +34,6 @@ userSchema.methods.verifyPassword = function(password) {
 };
 
 
-
 userSchema.methods.generateToken = function() {
   return jwt.sign({ id: this._id }, process.env.APP_SECRET || ' enter secret key here ');
 };
