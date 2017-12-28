@@ -17,35 +17,35 @@ const API = 'api/1.0';
 
 
 
-beforeAll (() => {
-  require ('../lib/_server').start (PORT);
+beforeAll(() => {
+  require('../lib/_server').start (PORT);
   return User.remove ({});
 });
 
 
 
-afterAll (() => {
-  mongoose.connection.close ();
-  require ('../lib/_server').stop;
+afterAll(() => {
+  mongoose.connection.close();
+  require('../lib/_server').stop;
 });
 
 
 
 describe('POST / signup', () => {
-  test ('new user can sign up / in', () => {
+  test('new user can sign up / in', () => {
     return request
-    .post ('${HOST} : ${PORT} : ${API} / signup')
-      .send ({username : 'Brian', password : '1234', email : 'email'})
-        .then (res => {
-          expect (res.text).not.toBe (undefined);
-            expect (res.status).toEqual (200);
+    .post(`${HOST}:${PORT}:${API}/signup`)
+      .send({username: 'Brian', password: '1234', email: 'email'})
+        .then(res => {
+          expect(res.text).not.toBe(undefined);
+            expect(res.status).toEqual(200);
     });
   });
 
 
   test('error 400 if there is no body', () => {
     return request
-      .post('${HOST} : ${PORT} / ${API} / signup')
+      .post(`${HOST}:${PORT}/${API}/signup`)
         .send({})
           .then(Promise.reject)
             .catch(res => {
@@ -55,14 +55,14 @@ describe('POST / signup', () => {
   });
 
 
-  test('error 400 if incomplete during signup', () => {
+  test('should return 400 if incomplete during signup', () => {
     return request
-      .post('${HOST} : ${PORT} / ${API} / signup')
+      .post(`${HOST}:${PORT}/${API}/signup`)
         .send({username : 'Bryan'})
           .then(Promise.reject)
             .catch(res => {
-              expect(res.message).toBe ('bad request');
-                expect(res.status).toEqual (400);
+              expect(res.message).toBe('bad request');
+                expect(res.status).toEqual(400);
     });
   });
 });
@@ -70,21 +70,21 @@ describe('POST / signup', () => {
 
 
 describe('GET / signin', () => {
-  test('200 if information is accepted', () => {
+  test('should return 200 w token if info accepted', () => {
     return request
-      .get('${HOST} : ${PORT} / ${API} / signin')
+      .get(`${HOST}:${PORT}/${API}/signin`)
         .auth('Brian', '1234')
           .then(res => {
-            expect(res.text).not.toBe (undefined);
-              expect(res.status).toEqual (200);
+            expect(res.text).not.toBe(undefined);
+              expect(res.status).toEqual(200);
     });
   });
 
 
-  test('error 401 if information provided is incorrect'), () => {
+  test('should return 401 if information provided is incorrect'), () => {
     return request
       .get(`${HOST}:${PORT}/${API}/signin`)
-        .auth ('Brian, '1235')
+        .auth('Brian', '1235')
           .then(Promise.reject)
             .catch(res => {
               expect(res.message).toBe('unauthorized');
@@ -99,7 +99,7 @@ describe('unregistered routes', () => {
   test('should return 404 invalid uri', () => {
       return request
         .get(`${HOST}:${PORT}/signin`)
-          .auth('Brian', 1235')
+          .auth('Brian', '1235')
             .then(Promise.reject)
               .catch(res => {
                 expect(res.message).toBe('not found');
