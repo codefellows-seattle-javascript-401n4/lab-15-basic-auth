@@ -25,7 +25,7 @@ userSchema.methods.generateHash = function(password) {
 };
 
 
-
+/*
 userSchema.methods.verifyPassword = function(password) {
   return bcrypt.compareAsync(password, this.password)
     .then(res => {
@@ -37,7 +37,7 @@ userSchema.methods.verifyPassword = function(password) {
 userSchema.methods.generateToken = function() {
   return jwt.sign({ id: this._id }, process.env.APP_SECRET || ' enter secret key here ');
 };
-
+*/
 
 
 module.exports = mongoose.model('User', userSchema);
