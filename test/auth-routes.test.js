@@ -2,17 +2,19 @@
 
 
 
-const mongoose = require ('mongoose');
-const User = require ('../models/user.js');
-const request = require ('superagent');
-const expect = require ('expect');
-require ('supertest');
+const mongoose = require('mongoose');
+const User = require('../models/user.js');
+const request = require('superagent');
+const expect = require('expect');
+require('supertest');
 
 
-process.env.DB_URL = 'mongodb://localhost:27017/costumes_stg';
+
+process.env.DB_URL = 'mongodb://localhost:27017/dev';
 const PORT = 4000;
 const HOST = 'http://localhost';
 const API = 'api/1.0';
+
 
 
 beforeAll (() => {
@@ -21,82 +23,87 @@ beforeAll (() => {
 });
 
 
+
 afterAll (() => {
   mongoose.connection.close ();
   require ('../lib/_server').stop;
 });
 
 
-describe ('POST / signup', () => {
 
+describe('POST / signup', () => {
   test ('new user can sign up / in', () => {
     return request
     .post ('${HOST} : ${PORT} : ${API} / signup')
-    .send ({username : 'Brian', password : '1234', email : 'email'})
-    .then (res => {
-      expect (res.text).not.toBe (undefined);
-      expect (res.status).toEqual (200);
+      .send ({username : 'Brian', password : '1234', email : 'email'})
+        .then (res => {
+          expect (res.text).not.toBe (undefined);
+            expect (res.status).toEqual (200);
     });
   });
 
-  test ('error 400 if there is no body', () => {
+
+  test('error 400 if there is no body', () => {
     return request
-    .post ('${HOST} : ${PORT} / ${API} / signup')
-    .send ({})
-    .then (Promise.reject)
-    .catch (res => {
-      expect (res.message).toBe ('bad request');
-      expect (res.status).toEqual (400);
+      .post('${HOST} : ${PORT} / ${API} / signup')
+        .send({})
+          .then(Promise.reject)
+            .catch(res => {
+              expect(res.message).toBe ('bad request');
+              expect(res.status).toEqual (400);
     });
   });
 
-  test ('error 400 if incomplete during signup', () => {
+
+  test('error 400 if incomplete during signup', () => {
     return request
-    .post ('${HOST} : ${PORT} / ${API} / signup')
-    .send ({username : 'Bryan'})
-    .then (Promise.reject)
-    .catch (res => {
-      expect (res.message).toBe ('bad request');
-      expect (res.status).toEqual (400);
+      .post('${HOST} : ${PORT} / ${API} / signup')
+        .send({username : 'Bryan'})
+          .then(Promise.reject)
+            .catch(res => {
+              expect(res.message).toBe ('bad request');
+                expect(res.status).toEqual (400);
     });
   });
 });
 
 
-describe ('GET / signin', () => {
 
-  test ('200 if information is accepted', () => {
+describe('GET / signin', () => {
+  test('200 if information is accepted', () => {
     return request
-    .get ('${HOST} : ${PORT} / ${API} / signin')
-    .auth ('Brian', '1234')
-    .then (res => {
-      expect (res.text).not.toBe (undefined);
-      expect (res.status).toEqual (200);
+      .get('${HOST} : ${PORT} / ${API} / signin')
+        .auth('Brian', '1234')
+          .then(res => {
+            expect(res.text).not.toBe (undefined);
+              expect(res.status).toEqual (200);
     });
   });
 
-  test ('error 401 if information provided is incorrect'), () => {
+
+  test('error 401 if information provided is incorrect'), () => {
     return request
-    .get ('${HOST} : ${PORT} / ${API} / signin')
-    .auth ('Brian, '1235')
-    .then (Promise.reject)
-    .catch (res => {
-      expect (res.message).toBe ('unauthorized');
-      expect (res.status).toEqual (401);
+      .get(`${HOST}:${PORT}/${API}/signin`)
+        .auth ('Brian, '1235')
+          .then(Promise.reject)
+            .catch(res => {
+              expect(res.message).toBe('unauthorized');
+                expect(res.status).toEqual(401);
     });
-  };
+  });
 });
 
 
-describe ('unregistered routes', () => {
-  test ('error 404 invalid uri', () => {
-    return request
-    .get ('${HOST} : ${PORT} / signin')
-    .auth ('Brian', 1235')
-    .then (Promise.reject)
-    .catch (res => {
-      expect (res.message).toBe ('not found');
-      expect (res.status).toEqual (404);
+
+describe('unregistered routes', () => {
+  test('should return 404 invalid uri', () => {
+      return request
+        .get(`${HOST}:${PORT}/signin`)
+          .auth('Brian', 1235')
+            .then(Promise.reject)
+              .catch(res => {
+                expect(res.message).toBe('not found');
+                  expect(res.status).toEqual(404);
     });
-  };
+  });
 });
