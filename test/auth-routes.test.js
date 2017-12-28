@@ -90,7 +90,7 @@ describe('GET / signin', () => {
               expect(res.message).toBe('unauthorized');
                 expect(res.status).toEqual(401);
     });
-  });
+  };
 });
 
 
