@@ -9,7 +9,7 @@
     "es6": true,
     "node": true,
     "browser": true,
-    "jest": true
+    "mocha": true
   },
   "rules": {
     "no-console": "off",
@@ -24,3 +24,4 @@
     "experimentalObjectRestSpread": true
   },
   "extends": "eslint:recommended"
+}
