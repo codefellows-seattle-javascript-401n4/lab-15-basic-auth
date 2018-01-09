@@ -7,8 +7,9 @@ const basicHTTP = require('../lib/basic-http');
 const jsonParser = require('body-parser').json();
 const authRouter = module.exports = require('express').Router();
 
-authRouter.post('/signup', jsonParser, (req, res, next) => {
 
+
+authRouter.post('/signup', jsonParser, (req, res, next) => {
   if(!req.body.username || !req.body.password || !req.body.email) return next(400);
 
   User.findOne({ username: req.body.username })
