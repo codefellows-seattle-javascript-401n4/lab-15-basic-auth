@@ -8,9 +8,7 @@ const User = require('../models/user.js');
 const expect = require('expect');
 require('supertest');
 
-
-
-process.env.DB_URL = 'mongodb://localhost:27017/auth_dev';
+process.env.DB_URL = 'mongodb://localhost:27017/costumes_stg';
 const PORT = 4000;
 const HOST = 'http://localhost';
 const API = 'api/1.0';
@@ -19,9 +17,8 @@ const API = 'api/1.0';
 
 beforeAll(() => {
   require('../lib/_server').start(PORT);
-  return User.remove ({});
+  return User.remove({});
 });
-
 
 
 afterAll(() => {
@@ -30,11 +27,11 @@ afterAll(() => {
 });
 
 
+describe('POST /signup', () => {
+  test('a new user can sign up when valid creds are provided', () => {
 
-describe('POST / signup', () => {
-  test('new user can sign up / in', () => {
     return request
-      .post(`${HOST}:${PORT}:${API}/signup`)
+      .post(`${HOST}:${PORT}/${API}/signup`)
       .send({username: 'Brian', password: '1234', email: 'email'})
       .then(res => {
         expect(res.text).not.toBe(undefined);
@@ -43,34 +40,33 @@ describe('POST / signup', () => {
   });
 
 
-  test('error 400 if there is no body', () => {
+  test('400 is returned if no body is posted on signup', () => {
     return request
       .post(`${HOST}:${PORT}/${API}/signup`)
       .send({})
       .then(Promise.reject)
       .catch(res => {
-        expect(res.message).toBe('bad request');
+        expect(res.message).toBe('Bad Request');
         expect(res.status).toEqual(400);
       });
   });
 
+  test('400 is returned if posted data is imcomplete on signup', () => {
 
-  test('should return 400 if incomplete during signup', () => {
     return request
       .post(`${HOST}:${PORT}/${API}/signup`)
-      .send({username : 'Bryan'})
+      .send({username: 'Codefellows'})
       .then(Promise.reject)
       .catch(res => {
-        expect(res.message).toBe('bad request');
+        expect(res.message).toBe('Bad Request');
         expect(res.status).toEqual(400);
       });
   });
 });
 
 
-
-describe('GET / signin', () => {
-  test('should return 200 w token if info accepted', () => {
+describe('GET /signin', () => {
+  test('Sign in w/valid creds should return a 200 and an auth token', () => {
     return request
       .get(`${HOST}:${PORT}/${API}/signin`)
       .auth('Brian', '1234')
@@ -81,28 +77,27 @@ describe('GET / signin', () => {
   });
 
 
-  test('should return 401 if information provided is incorrect'), () => {
+  test('Sign in with invalid creds should return a 401 and an auth token', () => {
     return request
       .get(`${HOST}:${PORT}/${API}/signin`)
-      .auth('Brian', '1235')
+      .auth('Brian', '4444')
       .then(Promise.reject)
       .catch(res => {
-        expect(res.message).toBe('unauthorized');
+        expect(res.message).toBe('Unauthorized');
         expect(res.status).toEqual(401);
       });
-  };
+  });
 });
 
 
-
-describe('unregistered routes', () => {
-  test('should return 404 invalid uri', () => {
+describe('UNREGISTERED ROUTES', () => {
+  test('Bad URI should return a 404', () => {
     return request
-      .get(`${HOST}:${PORT}/signin`)
-      .auth('Brian', '1235')
+      .get(`${HOST}:${PORT}/signin`) //missing the API version
+      .auth('Brian', '4444')
       .then(Promise.reject)
       .catch(res => {
-        expect(res.message).toBe('not found');
+        expect(res.message).toBe('Not Found');
         expect(res.status).toEqual(404);
       });
   });
