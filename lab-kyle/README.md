@@ -1,4 +1,4 @@
-Create a .env with PORT and MONGODB_URI
+Create a .env with PORT, MONGODB_URI and APP_SECRET
 
 Start mongoDB:
 npm run dbon
