@@ -1,26 +1,3 @@
-![CF](https://camo.githubusercontent.com/70edab54bba80edb7493cad3135e9606781cbb6b/687474703a2f2f692e696d6775722e636f6d2f377635415363382e706e67) 16: Basic Auth
-===
-
-## Submission Instructions
-  * fork this repository & create a new branch for your work
-  * write all of your code in a directory named `lab-` + `<your name>` **e.g.** `lab-susan`
-  * push to your repository
-  * submit a pull request to this repository
-  * submit a link to your PR in canvas
-  * write a question and observation on canvas
-
-## Learning Objectives  
-* students will be able to create basic authorization middleware
-* students will be able to test basic authorization for signup/signin routes
-
-## Requirements
-#### Configuration
-* `package.json`
-* `.eslintrc`
-* `.gitignore`
-* `.env`
-* `README.md`
-
 ## Feature Tasks
 * create the following directories to organize your code:
   * **lib**
