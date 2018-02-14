@@ -42,14 +42,20 @@
   },
   "homepage": "https://github.com/krichey15/lab-16-basic-auth#readme",
   "devDependencies": {
+    "debug": "^3.1.0",
     "expect": "^21.2.1",
+    "faker": "^4.1.0",
     "mongodb": "^2.2.33"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
     "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.0",
     "express": "^4.16.2",
     "jest": "^21.2.1",
+    "jsonwebtoken": "^8.1.1",
     "mongoose": "^4.13.0"
   }
 }

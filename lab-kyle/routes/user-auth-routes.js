@@ -1,16 +1,20 @@
 'use strict';
 
-const express = require('express');
-//TODO npm install --save body-parser
-const jsonParser = require('body-parser').json();
-const User = require(__dirname + '/../models/user');
+const debug = require('debug')('user-auth-routes');
 
-const authRouter = module.exports = express.Router();
+const User = require('../models/user');
+const errorHandler = require('../lib/middleware/error-handler');
 
-authRouter.post('/signup', jsonParser, (req, res, next) => {
-  next();
-});
+module.exports = function(router) {
 
-authRouter.get('/signin', jsonParser, (req, res, next) => {
-  next();
-});
+  router.post('/signup', (req, res, next) => {
+    debug('POST /signup');
+    return new User(req.user).save()
+      .then(user => res.status(201).json(user))
+      .catch(err => errorHandler(err, req, res));
+  });
+
+  router.get('/signin', (req, res, next) => {
+    debug('GET /signin');
+  });
+};

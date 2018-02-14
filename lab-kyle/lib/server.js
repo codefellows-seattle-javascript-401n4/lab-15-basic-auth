@@ -1,17 +1,48 @@
 'use strict';
 
+const debug = require('debug')('server');
+
+const express = require('express');
+const router = express.Router();
+const app = express();
+
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/auth_dev', {useMongoClient: true});
+let monCon = mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
 
-const app = require('express')();
+require('../routes/user-auth-routes')(router);
 
-app.use(require('../route/auth_routes.js'));
+app.use(require('body-parser').json());
+app.use(require('cors')());
+app.use(router);
 
-app.use((err,req, res, next) => {
-  console.log(err);
-  res.status(500 || err.statusCode).send(err.message || 'server error');
-  next();
-});
+app.all('/*', (req, res) => res.sendStatus(404));
 
-app.listen(process.env.PORT || 5000);
+const server = module.exports = {};
+server.isOn = false;
+server.start = () => {
+  return new Promise((resolve, reject) => {
+    if(!server || !server.isOn) {
+      server.http = app.listen(process.env.PORT, () => {
+        debug(`Listening on ${process.env.PORT}`);
+        server.isOn = true;
+        resolve();
+      });
+      return;
+    }
+    reject(new Error('server already running'));
+  });
+};
+
+server.stop = () => {
+  return new Promise((resolve, reject) => {
+    if(server.http && server.isOn) {
+      return server.http.close(() => {
+        monCon.close();
+        server.isOn = false;
+        resolve();
+      });
+    }
+    reject(new Error('the server is not running'));
+  });
+};
