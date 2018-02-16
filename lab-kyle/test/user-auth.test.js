@@ -17,9 +17,9 @@ describe('user auth routes' , function(){
     email: faker.internet.email(),
   };
 
-  describe('POST /signup', function(){
+  describe('POST /api/signup', function(){
     test('should post new user, return user data', function(){
-      return superagent.post(':8080/signup')
+      return superagent.post(':8080/api/signup')
         .send(this.mockUser)
         .then(res => {
           this.res = res;
@@ -28,9 +28,9 @@ describe('user auth routes' , function(){
         });
     });
   });
-  describe('GET /signin', function(){
+  describe('GET /api/signin', function(){
     test('should GET user token', function(){
-      return superagent.get(':8080/signin')
+      return superagent.get(':8080/api/signin')
         .auth(this.mockUser.username, this.mockUser.password)
         .then(res => {
           expect(res.body).toHaveProperty('token');

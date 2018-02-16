@@ -1,9 +1,9 @@
 'use strict';
 
-const debug = require('debug')('auth:error-handler');
+const debug = require('debug')('basicA:error-handler');
 
 module.exports = function (err, req, res){
-  debug(`#error-handler: ${ err.message }`);
+  debug(`error-handler: ${ err.message }`);
 
   let msg = err.message.toLowerCase();
 

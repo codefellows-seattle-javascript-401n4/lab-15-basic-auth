@@ -45,7 +45,8 @@
     "debug": "^3.1.0",
     "expect": "^21.2.1",
     "faker": "^4.1.0",
-    "mongodb": "^2.2.33"
+    "mongodb": "^2.2.33",
+    "superagent": "^3.8.2"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

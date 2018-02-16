@@ -1,10 +1,11 @@
 'use strict';
 
-const debug = require('debug')('server');
+const debug = require('debug')('basicA:server');
 
 const express = require('express');
 const router = express.Router();
 const app = express();
+
 
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
