@@ -7,35 +7,81 @@ const faker = require('faker');
 
 require('jest');
 
-describe('user auth routes' , function(){
+describe('Testing basic auth routes', function() {
+
   beforeAll(server.start);
   afterAll(server.stop);
 
-  this.mockUser = {
-    username: faker.internet.username(),
-    password: faker.internet.password(),
-    email: faker.internet.email(),
-  };
 
-  describe('POST /api/signup', function(){
-    test('should post new user, return user data', function(){
-      return superagent.post(':8080/api/signup')
-        .send(this.mockUser)
-        .then(res => {
-          this.res = res;
-          expect(this.res.body).toHaveProperty('token');
-          expect(this.res.status).toBe(201);
-        });
+  describe('POST to /api/signup', () => {
+
+    describe('Valid requests', () => {
+      this.mockUserData = {
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        email: faker.internet.email(),
+      };
+
+      test('should POST a new user to the db, and return user data', () => {
+        return superagent.post(':4000/api/signup')
+          .send(this.mockUserData)
+          .then(res => {
+            this.res = res;
+            expect(this.res.status).toBe(200);
+          });
+      });
+    });
+
+    describe('Invalid requests', () => {
+
+      test('Should throw 400 error with bad signUp information', () => {
+        return superagent.post(':4000/api/signup')
+          .send({})
+          .then(res => {
+            this.res = res;
+            expect(this.res.status).toBe(400);
+          });
+      });
+
+      test('Should throw 404 error on bad endpoint', () => {
+        return superagent.post(':4000/api/signup')
+          .send({})
+          .then(res => {
+            this.res = res;
+            expect(this.res.status).toBe(400);
+          });
+      });
     });
   });
-  describe('GET /api/signin', function(){
-    test('should GET user token', function(){
-      return superagent.get(':8080/api/signin')
-        .auth(this.mockUser.username, this.mockUser.password)
-        .then(res => {
-          expect(res.body).toHaveProperty('token');
-        });
+
+  describe('GET to /api/signin', () => {
+
+    describe('Valid requests', () => {
+
+      test('should GET a user token by sending username and password', () => {
+        return superagent.get(':4000/api/signin')
+          .auth(this.mockUserData.username, this.mockUserData.password)
+          .then(res => {
+            expect(res.status).toBe(200);
+          });
+      });
     });
 
+    describe('Invalid requests', () => {
+      test('should throw 400 with bad signIn credentials', () => {
+        return superagent.get(':4000/api/signin')
+          .auth(this.mockUserData.password)
+          .then(res => {
+            expect(res.status).toBe(401);
+          });
+      });
+      test('should throw 404 for bad endpoint', () => {
+        return superagent.get(':4000/api/sigin')
+          .auth(this.mockUserData.password)
+          .then(res => {
+            expect(res.status).toBe(401);
+          });
+      });
+    });
   });
 });
